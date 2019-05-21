@@ -15,10 +15,10 @@
 
 \newcommand{\btVFill}{\vskip0pt plus 1filll}
 
-\title{AmyloGram: Analysis of proteins in R}
+\title{Alphabet of life: analysis of proteins in \textbf{R}}
 \date{}
-\author{Jarek Chilimoniuk}
-\institute{Department of Bioinformatics and Genomics, University of Wrocław \\
+\author{Michał Burdukiewicz, PhD}
+\institute{Faculty of Mathematics and Computer Science \\
 }
 
 \begin{document}
@@ -95,6 +95,16 @@ names(best_enc) <- 1L:6
   
 
 \maketitle
+
+\begin{frame}{About me}
+
+\begin{itemize}
+\item bioinformatician (Warsaw University of Technology, Brandenburg University of Technology Cottbus-Senftenberg, .prot),
+\item founder of the Why \textbf{R}? Foundation and Wrocław \textbf{R} User Group,
+\item facilitator of McKinsey Tech Meetup.
+\end{itemize}
+\end{frame} 
+
 
 \begin{frame}{Presentation plan}
 
@@ -282,11 +292,15 @@ Longer n-games are more informative, but create larger attribute spaces that are
 
 \end{frame}
 
-\begin{frame}{slam: Sparse Lightweight Arrays and Matrices}
+\begin{frame}{Sparse matrices}
 
 % S3, szybsze i wydajniejsze niż matrix
 
-Counting n-grams creates sparse matrices, that are causing dimensional problems. 
+n-gram counting yields to sparse matrices (curse of dimensionality). 
+
+\end{frame}
+
+\begin{frame}{slam: Sparse Lightweight Arrays and Matrices}
 
 <<echo = FALSE, message=FALSE,warning=FALSE,fig.height=3.6,results='asis'>>=
 library(slam)
@@ -317,10 +331,10 @@ load("data/slam.RData")
 
 
 p %>% ggplot(aes(x = m, y = value, color = storage)) +
-  geom_jitter() + 
+  geom_line() + 
   my_theme +
   scale_y_continuous("File size [Mb]") +
-  scale_x_continuous("Number of sparse matrices") +
+  scale_x_continuous("Matrix dimension") +
   scale_color_manual("Package", values = c("red", "blue"))
 
 # format(object.size(as.simple_triplet_matrix(diag(1, 500))), units = "Kb")
@@ -332,30 +346,7 @@ p %>% ggplot(aes(x = m, y = value, color = storage)) +
 # Error: cannot allocate vector of size 7450.6 Gb
 @
 
-\end{frame}
-
-\begin{frame}{slam: Sparse Lightweight Arrays and Matrices}
-
-% S3, szybsze i wydajniejsze niż matrix
-
-<<echo = FALSE, message=FALSE,warning=FALSE,fig.height=3.6,results='asis'>>=
-library(slam)
-library(xtable)
-
-# load("data/slam.RData")
-
-p <- do.call(rbind, lapply(10^(0L:4), function(i) {
-  m <- diag(1, i)
-  data.frame(m = i,
-             storage = c("base", "slam"),
-             value = c(format(object.size(m), units = "Mb", digits = 6),
-                       format(object.size(as.simple_triplet_matrix(m)), units = "Mb", digits = 6)))
-}))
-
-names(p) <- c("Number of sparse matrices", "Package", "File size [Mb]")
-
-xtable(p)
-@
+\textit{slam} package: easy operations on sparse matrices in \textbf{R}.
 
 \end{frame}
 
@@ -1100,7 +1091,7 @@ A new functional amyloid produced by Methanospirillum sp. \citep{10.3389/fmicb.2
 
 \end{frame}
 
-\section{Shiny aplication}
+\section{Shiny web server}
 
 \begin{frame}{AmyloGram web server}
 
@@ -1120,130 +1111,128 @@ A new functional amyloid produced by Methanospirillum sp. \citep{10.3389/fmicb.2
 
 \end{frame}
 
-% \section{Other applications}
-% 
-% \begin{frame}{Signal peptides}
-% 
-% \begin{figure} 
-% \includegraphics[width=0.75\textwidth]{static_figure/SP.eps}
-% \end{figure}
-% 
-% Signal peptides~\citep{hegde_surprising_2006}:
-%         \begin{itemize}[<+->]
-%           \item short (20-30 residuals) N-terminal protein fragments forming $\alpha$-helices,
-%             \item they direct proteins to the intracellular matrix and then for secretion or cell compartiments,
-%             \item very variable, but always containing three characteristic domains.
-%         \end{itemize}
-% \end{frame}
-% 
-% 
-% 
-% %Peptydy sygnałowe rozpoczynają się naładowanym dodatnio n-regionem, po którym występuje hydrofobowy h-region i c-region zakończony miejscem cięcia rozpoznawanym przez peptydazę sygnałową. 
-% 
-%   
-% \begin{frame}{Signal peptides}  
-% % Skład aminokwasowy peptydów sygnałowych u \textit{Plasmodium} sp. (do których należy m. in. zarodziec malarii) jest inny od składu peptydów sygnałowych dobrze poznanych eukariontów. 
-% The amino acid composition of signal peptides in \textit{Plasmodium} sp. (ex. \textit{Plasmodium malariae}, wchich causes malaria) is different from that of the signal peptides of well known eukaryotes. 
-% <<echo = FALSE, message=FALSE,warning=FALSE,fig.height=3.5,results='asis'>>=
-% plot_pca(pca_full)
-%   #ggtitle("PCA częstości aminokwasów w peptydach sygnałowych")
-% @  
-% 
-% PCA amino acid frequency.
-% \end{frame}  
-% 
-% \begin{frame}{signalHsmm}
-% 
-% signalHsmm \citep{BurdukiewiczPredictionSignalPeptides2018}: use of hidden semi-Mark models and reduced amino acid alphabets to predict signal peptides in \textit{Plasmodium} sp. proteins.
-%  
-% \begin{figure} 
-% \includegraphics[width=0.75\textwidth]{static_figure/HSMMs.eps}
-% \end{figure}
-% 
-% \end{frame}
-% 
-% \begin{frame}{Benchmark with other predictors}
-% 
-% \begin{table}[H]
-% \centering
-% \small
-% \begin{tabular}{rllll}
-%   \toprule
-% Algorithm & Sensitivity & Specificity & MCC & AUC \\ 
-%   \midrule
-% signalP 4.1 (no tm) & 0.8235 & 
-% 0.9100 & 0.6872 & 
-% 0.8667 \\ 
-%    \rowcolor[gray]{0.85}signalP 4.1 (tm) 
-% & 0.6471 & 
-% 0.9431 & 0.6196 & 0.7951 \\ 
-%   signalP 3.0 (NN) & 0.8824 
-% & 0.9052 & 0.7220 & 
-% 0.8938 \\ 
-%    \rowcolor[gray]{0.85}signalP 3.0 (HMM) 
-%  & 0.6275 & 
-% 0.9194 & 0.5553 & 0.7734 \\ 
-%   PrediSi & 0.3333 & \textbf{0.9573} 
-% & 0.3849 & 0.6453 
-% \\ 
-%    \rowcolor[gray]{0.85}Philius 
-% & 0.6078 & 
-% 0.9336 & 0.5684 & 0.7707 \\ 
-%   Phobius & 0.6471 & 0.9289 & 
-% 0.5895 & 0.7880 \\ 
-%    \rowcolor[gray]{0.85}signalHsmm-2010 & \textbf{0.9804} & 0.8720 & \textbf{0.7409} & \textbf{0.9262} \\ 
-%    \bottomrule
-% \end{tabular}
-% \end{table}
-% 
-% \tiny Burdukiewicz, M., Sobczyk, P., Chilimoniuk, J., Gagat, P., and Mackiewicz, P. (2018). Prediction of Signal Peptides in Proteins from Malaria Parasites. International Journal of Molecular Sciences 19, 3709.
-% 
-% \end{frame}
-% 
-% 
-% \begin{frame}{Methanogram: predicting methanogens \mbox{culturing} conditions}
-% 
-% % Metanogeny to złożona grupa archebakterii produkujących metan o zróżnicowanych wymaganiach hodowlanych. Methanogram umożliwia przewidywanie warunków hodowlanych metanogenów na podstawie ich informacji genetycznej.
-% Methanogens are a complex group of archaeobacteria producing methane with different culturing requirements. A methanogram allows the prediction of the culturing conditions of a methanogens based on its genetic information.
-% 
-% \begin{figure} 
-% \includegraphics[width=0.58\textwidth]{static_figure/methanogens.jpg}
-% \end{figure}
-% 
-% \footnotesize
-% Metanogeny. Maryland Astrobiology Consortium, NASA, and STScI.
-% 
-% \end{frame}
-% 
-% 
-% \begin{frame}{Methanogram: predicting methanogens \mbox{culturing} conditions}
-% 
-% \begin{figure} 
-% \includegraphics[width=0.62\textwidth]{static_figure/Figure2.eps}
-% \end{figure}
-% 
-% \tiny{Burdukiewicz, M., Gagat, P., Jabłoński, S., Chilimoniuk, J., Gaworski, M., Mackiewicz, P., and Łukaszewicz, M. (2018). PhyMet2: a database and toolkit for phylogenetic and metabolic analyses of methanogens. Environmental Microbiology Reports 10, 378–382.}
-% 
-% \end{frame}
+\section{Other applications}
+
+\begin{frame}{Signal peptides}
+
+\begin{figure}
+\includegraphics[width=0.75\textwidth]{static_figure/SP.eps}
+\end{figure}
+
+Signal peptides~\citep{hegde_surprising_2006}:
+        \begin{itemize}[<+->]
+          \item short (20-30 residuals) N-terminal protein fragments forming $\alpha$-helices,
+            \item they direct proteins to the intracellular matrix and then for secretion or cell compartiments,
+            \item very variable, but always containing three characteristic domains.
+        \end{itemize}
+\end{frame}
+%
+%
+%
+% %Peptydy sygnałowe rozpoczynają się naładowanym dodatnio n-regionem, po którym występuje hydrofobowy h-region i c-region zakończony miejscem cięcia rozpoznawanym przez peptydazę sygnałową.
+%
+%
+\begin{frame}{Signal peptides}
+% % Skład aminokwasowy peptydów sygnałowych u \textit{Plasmodium} sp. (do których należy m. in. zarodziec malarii) jest inny od składu peptydów sygnałowych dobrze poznanych eukariontów.
+The amino acid composition of signal peptides in \textit{Plasmodium} sp. (ex. \textit{Plasmodium malariae}, wchich causes malaria) is different from that of the signal peptides of well known eukaryotes.
+<<echo = FALSE, message=FALSE,warning=FALSE,fig.height=3.5,results='asis'>>=
+plot_pca(pca_full)
+  #ggtitle("PCA częstości aminokwasów w peptydach sygnałowych")
+@
+
+PCA amino acid frequency.
+\end{frame}
+%
+\begin{frame}{signalHsmm}
+
+signalHsmm \citep{BurdukiewiczPredictionSignalPeptides2018}: use of hidden semi-Mark models and reduced amino acid alphabets to predict signal peptides in \textit{Plasmodium} sp. proteins.
+
+\begin{figure}
+\includegraphics[width=0.75\textwidth]{static_figure/HSMMs.eps}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{Benchmark with other predictors}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{rllll}
+  \toprule
+Algorithm & Sensitivity & Specificity & MCC & AUC \\
+  \midrule
+signalP 4.1 (no tm) & 0.8235 &
+0.9100 & 0.6872 &
+0.8667 \\
+   \rowcolor[gray]{0.85}signalP 4.1 (tm)
+& 0.6471 &
+0.9431 & 0.6196 & 0.7951 \\
+  signalP 3.0 (NN) & 0.8824
+& 0.9052 & 0.7220 &
+0.8938 \\
+   \rowcolor[gray]{0.85}signalP 3.0 (HMM)
+ & 0.6275 &
+0.9194 & 0.5553 & 0.7734 \\
+  PrediSi & 0.3333 & \textbf{0.9573}
+& 0.3849 & 0.6453
+\\
+   \rowcolor[gray]{0.85}Philius
+& 0.6078 &
+0.9336 & 0.5684 & 0.7707 \\
+  Phobius & 0.6471 & 0.9289 &
+0.5895 & 0.7880 \\
+   \rowcolor[gray]{0.85}signalHsmm-2010 & \textbf{0.9804} & 0.8720 & \textbf{0.7409} & \textbf{0.9262} \\
+   \bottomrule
+\end{tabular}
+\end{table}
+
+\tiny Burdukiewicz, M., Sobczyk, P., Chilimoniuk, J., Gagat, P., and Mackiewicz, P. (2018). Prediction of Signal Peptides in Proteins from Malaria Parasites. International Journal of Molecular Sciences 19, 3709.
+
+\end{frame}
+%
+%
+\begin{frame}{Methanogram: predicting methanogens \mbox{culturing} conditions}
+
+% Metanogeny to złożona grupa archebakterii produkujących metan o zróżnicowanych wymaganiach hodowlanych. Methanogram umożliwia przewidywanie warunków hodowlanych metanogenów na podstawie ich informacji genetycznej.
+Methanogens are a complex group of archaeobacteria producing methane with different culturing requirements. A methanogram allows the prediction of the culturing conditions of a methanogens based on its genetic information.
+
+\begin{figure}
+\includegraphics[width=0.58\textwidth]{static_figure/methanogens.jpg}
+\end{figure}
+
+\footnotesize
+Metanogeny. Maryland Astrobiology Consortium, NASA, and STScI.
+
+\end{frame}
+%
+%
+\begin{frame}{Methanogram: predicting methanogens \mbox{culturing} conditions}
+
+\begin{figure}
+\includegraphics[width=0.62\textwidth]{static_figure/Figure2.eps}
+\end{figure}
+
+\tiny{Burdukiewicz, M., Gagat, P., Jabłoński, S., Chilimoniuk, J., Gaworski, M., Mackiewicz, P., and Łukaszewicz, M. (2018). PhyMet2: a database and toolkit for phylogenetic and metabolic analyses of methanogens. Environmental Microbiology Reports 10, 378–382.}
+
+\end{frame}
 
 
 
-% \begin{frame}{Podsumowanie}
-% \small\begin{itemize}
-% \item Zastosowanie n-gramów (k-merów), czyli ciągów aminokwasów lub nukleotydów o długości $n$ okazało się skuteczne do charakterystyki sekwencji peptydów sygnałowych i amyloidogennych oraz markerów molekularnych metanogenów, a następnie do przewidywania tych peptydów oraz optymalnych warunków hodowli metanogenów w oparciu o te markery.
-% \item Zastosowanie uproszczonych alfabetów aminokwasowych, w których aminokwasy są grupowane ze względu na swoje podobieństwo fizykochemiczne lub funkcjonalne, okazało się bardzo dobrym podejściem do opisu sekwencji aminokwasowych o zróżnicowanym składzie i wyeksponowania ich cech istotnych do przewidywania peptydów sygnałowych i amyloidogennych.
-% \item Opracowana procedura QuiPT (\textbf{Qui}ck \textbf{P}ermutation \textbf{T}est) pozwala na szybki wybór najbardziej informatywnych n-gramów i uzyskiwanie dokładnych p-wartości.
-% \item Zastosowana metodologia tworzenia uproszczonych alfabetów umożliwia identyfikowania kluczowych cech związanych z charakterystycznymi cechami peptydów.
-% \end{itemize}
-% \end{frame}
+\begin{frame}{Summary}
+\small\begin{itemize}
+\item n-grams effectively characterize proteins and.
+\item Reduced alphabets allows us to discern amino acid motifs related to biological functions.
+\end{itemize}
+\end{frame}
 
 \begin{frame}{Summary}
 
 Web servers:
 \begin{itemize}
 \item \textbf{AmyloGram}: \url{http://www.smorfland.uni.wroc.pl/shiny/AmyloGram/}.
-% \item \textbf{MethanoGram}: \url{http://www.smorfland.uni.wroc.pl/shiny/MethanoGram/}.
-% \item \textbf{signalHsmm}: \url{http://www.smorfland.uni.wroc.pl/shiny/signalHsmm/}.
+\item \textbf{MethanoGram}: \url{http://www.smorfland.uni.wroc.pl/shiny/MethanoGram/}.
+\item \textbf{signalHsmm}: \url{http://www.smorfland.uni.wroc.pl/shiny/signalHsmm/}.
 \end{itemize}
 
 
@@ -1251,9 +1240,9 @@ Web servers:
 \begin{itemize}
 \item \textbf{AmyloGram}: \url{https://cran.r-project.org/package=AmyloGram}.
 \item \textbf{biogram}: \url{https://cran.r-project.org/package=biogram}.
-% \item \textbf{signalHsmm}: \url{https://cran.r-project.org/package=signalHsmm}.
+\item \textbf{signalHsmm}: \url{https://cran.r-project.org/package=signalHsmm}.
 \end{itemize}
-\end{frame}  
+\end{frame}
 
 \begin{frame}{Summary}
 
@@ -1263,7 +1252,7 @@ Models predicting the properties of proteins may be based on precise rules that 
 \end{frame}
 
 % \begin{frame}{Podsumowanie}
-% \begin{figure} 
+% \begin{figure}
 % \includegraphics[width=0.75\textwidth]{static_figure/r1.png}
 % \includegraphics[width=0.75\textwidth]{static_figure/r2.png}
 % \end{figure}
@@ -1273,11 +1262,11 @@ Models predicting the properties of proteins may be based on precise rules that 
 \begin{frame}{Acknowledgements}
 
 \begin{itemize}
-\item Michał Burdukiewicz (Politechnika Warszawska).
-\item Małgorzata Kotulska (Politechnika Wrocławska).
+\item Jarosław Chilimoniuk (University of Wrocław).
+\item Małgorzata Kotulska (Wroclaw University of Technology).
 \item Stefan Rödiger (Brandenburg University of Technology Cottbus-Senftenberg).
-\item Paweł Mackiewicz (Uniwersytet Wrocławski).
-\item Piotr Sobczyk (Politechnika Wrocławska).
+\item Paweł Mackiewicz (University of Wrocław).
+\item Piotr Sobczyk (Wroclaw University of Technology).
 \end{itemize}
 \end{frame}
 
@@ -1293,17 +1282,17 @@ Funding:
 
 \end{frame}
 
-% \begin{frame}{MI$^2$ Data Lab}
-% 
-% MI$^2$ Data Lab (\url{https://mi2.mini.pw.edu.pl/}), Wydział Matematyki i Nauk Informatycznych, Politechnika Warszawska.
-% 
-% \begin{figure} 
-% \includegraphics[width=0.75\textwidth]{static_figure/mi2.png}
-% \end{figure}
-% 
-% Kontakt: \url{michalburdukiewicz@gmail.com}.
-% 
-% \end{frame}
+\begin{frame}{MI$^2$ Data Lab}
+
+MI$^2$ Data Lab (\url{https://mi2.mini.pw.edu.pl/}), Faculty of Mathematics and Computer Science.
+
+\begin{figure}
+\includegraphics[width=0.75\textwidth]{static_figure/mi2.png}
+\end{figure}
+
+Contact: \url{michalburdukiewicz@gmail.com}.
+
+\end{frame}
 
 \begin{frame}[allowframebreaks]
         \frametitle{References}
