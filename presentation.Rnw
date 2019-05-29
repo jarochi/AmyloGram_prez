@@ -172,7 +172,7 @@ Protein higher order structures determines its function.
 
 \end{frame} 
 
-\begin{frame}{Human proteom}
+\begin{frame}{Human proteome}
 
 <<echo = FALSE, message=FALSE,warning=FALSE,fig.height=3.5,results='asis'>>=
 library(waffle)
